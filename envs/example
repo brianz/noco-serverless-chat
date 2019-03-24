@@ -1,0 +1,14 @@
+# Put environment variables in this file, one per line in the form
+#
+# MYAPP_SOME_VARIABLE=foobar
+# MYAPP_DB_HOST=somehost.aws.rds.amazon.com
+#
+# Create one environments file per environment that you will be using.
+# Other environments may be "production", "qa", etc.
+# 
+# Note, you will *always* need AWS settings, in order for the serverless 
+# deployments to work. Add values to the settings below.
+AWS_REGION=us-west-2
+AWS_DEFAULT_REGION=us-west-2
+AWS_SECRET_ACCESS_KEY=
+AWS_ACCESS_KEY_ID=

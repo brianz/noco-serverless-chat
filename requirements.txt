@@ -1,0 +1,2 @@
+# put any python requirements here
+boto3

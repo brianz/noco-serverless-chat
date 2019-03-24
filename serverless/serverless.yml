@@ -1,0 +1,78 @@
+service: noco-sls-chat
+
+provider:
+  name: aws
+  frameworkVersion: "=1.38.0"
+  logRetentionInDays: 14
+  region: ${env:AWS_REGION}
+  runtime: python3.6
+  stage: ${env:ENV}
+  timeout: 6
+  versionFunctions: false
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:*"
+      Resource: !GetAtt ConnectionsTable.Arn
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource:
+        - "arn:aws:lambda:${env:AWS_REGION}:*:function:${self:service}-${env:ENV}-broadcast"
+  environment:
+    DYNAMO_TABLE_NAME: !Ref ConnectionsTable
+
+# These are some sane excludes for Python
+package:
+  exclude:
+    - "**/__pycache__/**"
+    - "*.pyc"
+    - "*.swp"
+    - package-lock.json
+    - package.json
+    - .git/**
+    - __pycache__/**
+    - node_modules/**
+    - lib/**
+
+# you can add CloudFormation resource templates here
+resources:
+  Resources:
+    ConnectionsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: epoch
+          AttributeType: N
+        KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: epoch
+          KeyType: RANGE
+
+functions:
+  connect:
+    handler: handler.connect
+    layers:
+      - arn:aws:lambda:us-west-2:420819310858:layer:NoCoAWSLab:5
+    events:
+      - websocket: $connect
+  disconnect:
+    handler: handler.disconnect
+    layers:
+      - arn:aws:lambda:us-west-2:420819310858:layer:NoCoAWSLab:5
+    events:
+      - websocket: $disconnect
+  default:
+    handler: handler.default
+    layers:
+      - arn:aws:lambda:us-west-2:420819310858:layer:NoCoAWSLab:5
+    events:
+      - websocket: $default
+  broadcast:
+    handler: handler.broadcast
+    layers:
+      - arn:aws:lambda:us-west-2:420819310858:layer:NoCoAWSLab:5
