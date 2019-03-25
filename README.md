@@ -24,14 +24,14 @@ to channel members. The coolest this is that this is entirely serverless and in 
 - This will deploy everything you need to AWS. You'll see a websocket URI from the output of that command, something like
   `wss://aipsb783ea.execute-api.us-west-2.amazonaws.com/username`
 - Install `wscat` by just running `yarn` (still in the `/code` directory)
-- In two different terminals: `./node_modules/.bin/wscat wss://aipsb783ea....`
+- In two different terminals: `./node_modules/.bin/wscat -c wss://YOUR_WS_ENDPOING`
 - Now start typing...you'll see messages from one window pop up into another.
 
 # Commands
 
 - `/name bz` - Change your display name to `bz`
 - `/channel random` - Change to the `random` channel. Default channel is `general`
-- '/help'
+- `/help`
 
 # Dev setup
 
