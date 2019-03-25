@@ -32,6 +32,6 @@ We'll be using resources which are outside of the free tier, but we'll be destro
 night...this whole thing will at most cost a few cents.
 
 If you have any questions please @ mention me in our Slack group in the `#noco-aws-meetup` channel. If you're not a
-member, you can sign up here: [https://tinyurl.com/nocotech](https://tinyurl.com/nocotech_
+member, you can sign up here: [https://tinyurl.com/nocotech](https://tinyurl.com/nocotech)
 
 Looking forward to this!
