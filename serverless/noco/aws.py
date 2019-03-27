@@ -1,11 +1,8 @@
 import os
 import boto3
 import hashlib
-import json
-import decimal
 
-# from boto3.dynamodb.conditions import Key
-# from botocore.exceptions import ClientError
+from .helpers import safe_dumps
 
 MESSAGE_TABLE_NAME = os.environ['DYNAMO_TABLE_NAME']
 
@@ -24,7 +21,7 @@ def get_table(table_name=MESSAGE_TABLE_NAME):    # pragma: no cover
 
 
 def set_connection_id(connection_id, channel='general'):
-    """Save an initial connection"""
+    """Save an individual connection to a given channel"""
     table = get_table()
 
     conn_key = _get_channel_connections_key(channel)
@@ -43,6 +40,13 @@ def set_connection_id(connection_id, channel='general'):
         ReturnValues='UPDATED_NEW',
     )
 
+    # Also update the list of channels
+    table.update_item(
+        Key=_get_channels_list_key(),
+        UpdateExpression='ADD channels :value',
+        ExpressionAttributeValues={':value': set([channel])},
+    )
+
 
 def delete_connection_id(connection_id, channel='general'):
     """Delete an item from DynamoDB which represents a client being connected"""
@@ -56,6 +60,12 @@ def delete_connection_id(connection_id, channel='general'):
         Key=conn_key,
         UpdateExpression=update_expr,
     )
+
+
+def get_channels_list():
+    table = get_table()
+    row = table.get_item(Key=_get_channels_list_key())
+    return row.get('Item')['channels']
 
 
 def get_user(connection_id):
@@ -128,6 +138,10 @@ def _get_channel_connections_key(channel):
     return {'pk': pk, 'epoch': 0}
 
 
+def _get_channels_list_key():
+    return {'pk': 'channels', 'epoch': 0}
+
+
 def _get_user_key(connection_id):
     return {'pk': connection_id, 'epoch': 0}
 
@@ -139,23 +153,11 @@ def _get_connection_column_name(connection_id):
 # Lambda stuff
 
 
-# Helper class to convert a DynamoDB item to JSON.
-class DecimalEncoder(json.JSONEncoder):
-
-    def default(self, o):
-        if isinstance(o, decimal.Decimal):
-            if o % 1 > 0:
-                return float(o)
-            else:
-                return int(o)
-        return super(DecimalEncoder, self).default(o)
-
-
 def invoke_lambda_async(function_name, payload):
     """Invoke a Lambda function with an Event invocation type"""
     _lambda = boto3.client('lambda')
     return _lambda.invoke(
         FunctionName=function_name,
-        Payload=json.dumps(payload, cls=DecimalEncoder),
+        Payload=safe_dumps(payload),
         InvocationType='Event',
     )

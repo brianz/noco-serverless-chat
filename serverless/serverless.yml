@@ -14,11 +14,6 @@ provider:
       Action:
         - "dynamodb:*"
       Resource: !GetAtt ConnectionsTable.Arn
-    - Effect: Allow
-      Action:
-        - lambda:InvokeFunction
-      Resource:
-        - "arn:aws:lambda:${env:AWS_REGION}:*:function:${self:service}-${env:ENV}-broadcast"
   environment:
     DYNAMO_TABLE_NAME: !Ref ConnectionsTable
 
@@ -66,13 +61,16 @@ functions:
       - arn:aws:lambda:us-west-2:420819310858:layer:NoCoAWSLab:5
     events:
       - websocket: $disconnect
+  command:
+    handler: handler.handle_cmd
+    layers:
+      - arn:aws:lambda:us-west-2:420819310858:layer:NoCoAWSLab:5
+    events:
+      - websocket:
+          route: command
   default:
     handler: handler.default
     layers:
       - arn:aws:lambda:us-west-2:420819310858:layer:NoCoAWSLab:5
     events:
       - websocket: $default
-  broadcast:
-    handler: handler.broadcast
-    layers:
-      - arn:aws:lambda:us-west-2:420819310858:layer:NoCoAWSLab:5
