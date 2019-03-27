@@ -61,13 +61,6 @@ functions:
       - arn:aws:lambda:us-west-2:420819310858:layer:NoCoAWSLab:5
     events:
       - websocket: $disconnect
-  command:
-    handler: handler.handle_cmd
-    layers:
-      - arn:aws:lambda:us-west-2:420819310858:layer:NoCoAWSLab:5
-    events:
-      - websocket:
-          route: command
   default:
     handler: handler.default
     layers:
