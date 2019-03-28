@@ -13,11 +13,11 @@ to channel members. The coolest this is that this is entirely serverless and in 
 
 - Add AWS credentials into the `envs/$(whoami)` file. This file can be named anything, but I
   suggest your username or something else specific. You can just name it `envs/dev` as well. See
-  `envs/example` for help.
+  `envs/example` for help. **Use `us-west-2` as your default region, others will not function properly.**
 - Start up the shell with docker: `ENV=$(whoami) make shell` *NOTE*: The value after `ENV=` is merely
   the name of the file you created. So if you created the `envs/dev` file, do `ENV=dev`. Now you're
   in your Docker container which has all of the necessary libraries and tooling.
-  
+
 **Run all of the following commands in your Docker container!**
 
 - Run `make deploy`
