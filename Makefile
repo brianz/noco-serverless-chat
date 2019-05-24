@@ -55,6 +55,14 @@ else
 endif
 .PHONY: deploy
 
+destroy : guard-ENV check_remove
+	cd serverless && sls remove -s $(ENV)
+.PHONY: destroy
+
+check_remove:
+	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
+.PHONY: check_remove
+
 guard-%:
 	@ if [ "${${*}}" = "" ]; then \
 		echo "\033[31mEnvironment variable $* required but not set\033[0m"; \
