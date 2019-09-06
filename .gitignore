@@ -1,2 +1,4 @@
 node_modules
 .envrc
+build/ 
+boto3-botocore.zip

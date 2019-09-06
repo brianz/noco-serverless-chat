@@ -2,7 +2,7 @@ service: noco-sls-chat
 
 provider:
   name: aws
-  frameworkVersion: "=1.38.0"
+  frameworkVersion: "=1.50.0"
   logRetentionInDays: 14
   region: ${env:AWS_REGION}
   runtime: python3.6
@@ -29,8 +29,8 @@ package:
     - __pycache__/**
     - node_modules/**
     - lib/**
+    - build/**
 
-# you can add CloudFormation resource templates here
 resources:
   Resources:
     ConnectionsTable:
@@ -52,25 +52,25 @@ functions:
   connect:
     handler: handler.connect
     layers:
-      - arn:aws:lambda:us-west-2:420819310858:layer:NoCoAWSLab:5
+      - arn:aws:lambda:us-west-2:420819310858:layer:boto3-botocore:1
     events:
       - websocket: $connect
   disconnect:
     handler: handler.disconnect
     layers:
-      - arn:aws:lambda:us-west-2:420819310858:layer:NoCoAWSLab:5
+      - arn:aws:lambda:us-west-2:420819310858:layer:boto3-botocore:1
     events:
       - websocket: $disconnect
   command:
     handler: handler.handle_cmd
     layers:
-      - arn:aws:lambda:us-west-2:420819310858:layer:NoCoAWSLab:5
+      - arn:aws:lambda:us-west-2:420819310858:layer:boto3-botocore:1
     events:
       - websocket:
           route: command
   default:
     handler: handler.default
     layers:
-      - arn:aws:lambda:us-west-2:420819310858:layer:NoCoAWSLab:5
+      - arn:aws:lambda:us-west-2:420819310858:layer:boto3-botocore:1
     events:
       - websocket: $default
